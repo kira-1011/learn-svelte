@@ -12,6 +12,6 @@
     $inspect(textColor);
 </script>
 
-<h1 style="color: rgb({textColor})">Hello</h1>
+<h1 class="bg-red-600">Hello</h1>
 
 <button onclick={() => changeColor()}>Change Color</button>
