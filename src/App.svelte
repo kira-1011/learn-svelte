@@ -1,17 +1,72 @@
-<script>
-    let textColor = $state("255,0,0");
+<script lang="ts">
+    import TodoItem from "./lib/todo.svelte";
+    import TodoSearch from "./lib/todo-search.svelte";
+    import type { Todo } from "./types";
+    let todos = $state<Todo[]>([
+        {
+            id: "1",
+            text: "test",
+            completed: false,
+        },
+        {
+            id: "2",
+            text: "dog",
+            completed: false,
+        },
+        {
+            id: "3",
+            text: "cat",
+            completed: false,
+        },
+        {
+            id: "4",
+            text: "bird",
+            completed: false,
+        },
+        {
+            id: "5",
+            text: "fish",
+            completed: false,
+        },
+        {
+            id: "6",
+            text: "apple",
+            completed: true,
+        },
+        {
+            id: "7",
+            text: "banana",
+            completed: false,
+        },
+    ]);
 
-    const changeColor = () => {
-        let rgb = [
-            Math.floor(Math.random() * 256),
-            Math.floor(Math.random() * 256),
-            Math.floor(Math.random() * 256),
-        ];
-        textColor = rgb.join(",");
+    let query = $state("");
+
+    let filteredTodos = $derived(
+        todos.filter((todo) =>
+            todo.text.toLowerCase().includes(query.toLowerCase()),
+        ),
+    );
+
+    const onSearch = (value: string) => {
+        query = value;
     };
-    $inspect(textColor);
+
+    const onComplete = (id: string, completed: boolean) => {
+        todos.forEach((todo) => {
+            if (todo.id === id) {
+                todo.completed = completed;
+            }
+        });
+    };
 </script>
 
-<h1 class="bg-red-600">Hello</h1>
+<main class="space-y-4">
+    <h1 class="text-4xl font-bold">TODO APP</h1>
 
-<button onclick={() => changeColor()}>Change Color</button>
+    <TodoSearch {onSearch} />
+
+    {#each filteredTodos as todo}
+        <TodoItem {todo} {onComplete} />
+    {/each}
+</main>
