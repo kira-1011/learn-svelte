@@ -10,18 +10,22 @@
 
     const characters = content.split("");
 
+    const clearAttempts = () => {
+        attempts = [];
+    };
+
     // Timer state
-    let startTime = $state<number | null>(null);
-    let elapsedTime = $state(0);
+    let startTime = $state<number>(60);
     let timerInterval: ReturnType<typeof setInterval> | null = null;
 
     const startTimer = () => {
-        if (startTime === null) {
-            startTime = Date.now();
-            timerInterval = setInterval(() => {
-                elapsedTime = Math.floor((Date.now() - startTime!) / 1000);
-            }, 100);
-        }
+        timerInterval = setInterval(() => {
+            startTime -= 1;
+            if (startTime <= 0) {
+                clearInterval(timerInterval!);
+                clearAttempts();
+            }
+        }, 1000);
     };
 
     const formatTime = (seconds: number): string => {
@@ -44,7 +48,9 @@
             }
         } else if (e.key.length === 1 && cursorPosition < content.length) {
             e.preventDefault();
-            startTimer();
+            if (!timerInterval) {
+                startTimer();
+            }
             attempts.push(e.key);
         }
     };
@@ -60,7 +66,7 @@
 </script>
 
 <div class="text-2xl font-mono text-yellow-400 mb-4">
-    {formatTime(elapsedTime)}
+    {formatTime(startTime)}
 </div>
 
 <!-- svelte-ignore a11y_no_noninteractive_tabindex -->
